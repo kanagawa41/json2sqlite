@@ -21,7 +21,9 @@ $ sqlite3 analysis.db
 * github.com/jinzhu/gorm
 
 ## Usage
-* You prepare your json data.
+* Prepare your json data.
+* Create `struct.go`, copied from `struct-sample.go`. 
+* Modify `struct.go` as json data struct.
 * Then you pass that to this script as stdin.
 
 ### Tips
