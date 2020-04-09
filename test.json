@@ -1,0 +1,4 @@
+[
+  {"name":"Ken","email":"ken@example.com","age":22,"birthday":"2014-08-25T12:00:00+09:00","role":"Father","member_number":"1","address":"Tokyo","ignore_me":1},
+  {"name":"Taro","email":"taro@example.com","age":223,"birthday":"2014-08-25T12:00:00+09:00","role":"Daughter","member_number":"3","address":"Osaka","ignore_me":3}
+]
