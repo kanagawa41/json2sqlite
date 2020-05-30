@@ -8,6 +8,7 @@ import (
 	"os"
 
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	gormbulk "github.com/t-tiger/gorm-bulk-insert/v2"
 
 	"github.com/jinzhu/gorm"
 )
@@ -24,36 +25,44 @@ stdout_as_data_json | %s
 
 func main() {
 	bytes, _ := ioutil.ReadAll(os.Stdin)
-	var records Records
-	json.Unmarshal(bytes, &records)
-
-	err := initMigration()
+	var records []Record
+	err := json.Unmarshal(bytes, &records)
 	if err != nil {
 		panic(err)
-		return
+	}
+
+	// For value must be kind of Struct
+	var iRecords []interface{}
+	for _, record := range records {
+		iRecords = append(iRecords, record)
+	}
+
+	err = initMigration()
+	if err != nil {
+		panic(err)
 	}
 
 	db, err := connection()
 	if err != nil {
 		panic(err)
-		return
 	}
 	defer db.Close()
 
-	var errCnt int
-	for _, record := range records {
-		errors := db.Create(&record).GetErrors()
-
-		for _, err := range errors {
-			errCnt++
-			fmt.Fprint(os.Stderr, err)
+	for offset, offsetP, arrLen := 0, onceInsertNum, len(iRecords); offset <= arrLen; offset += offsetP {
+		var limit int
+		if arrLen < offset+offsetP {
+			limit = arrLen
+		} else {
+			limit = offset + offsetP
+		}
+		fmt.Println(offset, limit)
+		err = gormbulk.BulkInsert(db, iRecords[offset:limit], onceInsertNum)
+		if err != nil {
+			panic(err)
 		}
 	}
 
 	fmt.Printf("Finished insert into database of SQLite. Check %s.\n", dbFileName)
-	if errCnt > 0 {
-		fmt.Printf("%d of %d rows were failed insert.\n", errCnt, len(records))
-	}
 }
 
 func initMigration() error {

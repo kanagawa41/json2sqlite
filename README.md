@@ -16,25 +16,24 @@ Finished insert into database of SQLite. Check analysis.db.
 $ sqlite3 analysis.db
 ```
 
-## Requirement
-* golang
-* github.com/jinzhu/gorm
-
 ## Usage
 * Prepare your json data.
-* Create `struct.go`, copied from `struct-sample.go`. 
+* Create `struct.go`, copied from `struct.go.sample`. 
 * Modify `struct.go` as json data struct.
-* Then you pass that to this script as stdin.
+* Then you pass json data to this script as stdin.
 
-### Tips
-* If you don't want to get the cause of error, you specify "2>", like below:
+### Do it
 ```
-$ cat test.json | go run main.go struct.go 2>
+$ cp struct.go.sample struct.go && cat test.json | go run main.go struct.go
+$ sqlite3 analysis.db
+sqlite> select * from records;
+1|Ken|34|1985-10-26 12:00:00+09:00|ken@example.com|Father|1|Tokyo
+2|Taro|43|1976-07-13 14:00:00+09:00|taro@example.com|Daughter|3|Osaka
 ```
 
 ## Install
 ```
-$ go mod vendor
+$ go get
 ```
 
 ## Build
@@ -43,7 +42,7 @@ $ go mod vendor
 $ go env
 ```
 ### Do it
-In my case, using mac
+When using mac
 ```
 $ env GOOS=darwin GOARCH=amd64 go build -a -v main.go struct.go
 ```
